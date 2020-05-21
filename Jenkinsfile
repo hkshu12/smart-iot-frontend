@@ -8,7 +8,6 @@ pipeline {
         stage("install") {
             steps {
                 script{
-                    echo "a push test"
                     sh "source /etc/profile"
                     sh "npm config set registry https://registry.npm.taobao.org/"
                     sh "npm install"
