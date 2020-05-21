@@ -8,20 +8,20 @@ pipeline {
         stage("install") {
             steps {
                 script{
-                    sh "yarn config set registry https://registry.npm.taobao.org/"
-                    sh "yarn install"
+                    sh "npm config set registry https://registry.npm.taobao.org/"
+                    sh "npm install"
                 }
             }
         }
-    
+
         stage("build") {
             steps {
                 script{
-                    sh "yarn build"
+                    sh "npm run build"
                 }
             }
         }
-    
+
         stage("publish") {
             steps {
                 script {
