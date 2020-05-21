@@ -13,14 +13,14 @@ pipeline {
             steps {
                 script {
                     echo "开始构建"
-                    if(!env.BRANCH_NAME.startsWith('feature-') && !env.BRANCH_NAME.startsWith('release-')){
-                        error("自动构建分支名称必须以feature-或release-开头，当前分支名称为: ${env.BRANCH_NAME}")
+                    if(!env.BRANCH_NAME == 'master' && !env.BRANCH_NAME == 'dev'){
+                        error("当前分支名称为: ${env.BRANCH_NAME}")
                     }
 
-                    if (env.BRANCH_NAME.startsWith('master') ) {
+                    if (env.BRANCH_NAME == 'master' ) {
                         env.env = "release"
                     }
-                    if (env.BRANCH_NAME.startsWith('dev')) {
+                    if (env.BRANCH_NAME == 'dev') {
                         env.env = "dev"
                     }
 
