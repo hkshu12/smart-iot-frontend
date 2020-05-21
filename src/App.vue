@@ -3,7 +3,6 @@
     <div id="app">
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
-      <img src="./assets/logo.png">
       <div>
         <p>
           If Ant-Design-Vue is successfully added to this project, you'll see an
@@ -14,7 +13,7 @@
         <a-button type="primary">Primary</a-button>
         <a-pagination size="small" :total="50" showSizeChanger showQuickJumper />
       </div>
-      <HelloWorld msg="Welcome to Your Vue.js App"/>
+      <router-view></router-view>
     </div>
   </a-locale-provider>
 </template>
@@ -22,7 +21,6 @@
 <script>
 // eslint-disable-next-line camelcase
 import zh_CN from 'ant-design-vue/lib/locale-provider/zh_CN';
-import HelloWorld from '@/components/HelloWorld.vue';
 
 export default {
   name: 'app',
@@ -30,9 +28,6 @@ export default {
     return {
       zh_CN,
     };
-  },
-  components: {
-    HelloWorld,
   },
 };
 </script>
