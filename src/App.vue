@@ -1,6 +1,8 @@
 <template>
   <a-locale-provider :locale="zh_CN">
     <div id="app">
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link>
       <img src="./assets/logo.png">
       <div>
         <p>
