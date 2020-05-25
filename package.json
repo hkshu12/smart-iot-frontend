@@ -25,6 +25,7 @@
     "axios": "^0.19.2",
     "babel-eslint": "^10.1.0",
     "babel-plugin-import": "^1.11.0",
+    "compression-webpack-plugin": "^4.0.0",
     "eslint": "^6.7.2",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-vue": "^6.2.2",
@@ -33,6 +34,7 @@
     "lint-staged": "^9.5.0",
     "stylus": "^0.54.7",
     "stylus-loader": "^3.0.2",
+    "uglifyjs-webpack-plugin": "^2.2.0",
     "vue-cli-plugin-ant-design": "^1.0.1",
     "vue-cli-plugin-axios": "^0.0.4",
     "vue-template-compiler": "^2.6.11"
