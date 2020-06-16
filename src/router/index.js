@@ -99,7 +99,6 @@ const router = new VueRouter({
 });
 
 router.afterEach((to) => {
-  console.log(to);
   document.title = `Smart IoT | ${to.meta.title}`;
 });
 

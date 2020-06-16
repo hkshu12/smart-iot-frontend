@@ -6,18 +6,32 @@ import {
   Menu,
   Icon,
   Breadcrumb,
+  Notification,
+  Table,
+  Pagination,
+  Popconfirm,
+  Message,
+  Modal,
+  FormModel,
+  Input,
+  Radio,
+  Switch,
 } from 'ant-design-vue';
 
-Vue.component(ConfigProvider.name, ConfigProvider);
-Vue.component(Button.name, Button);
-Vue.component(Layout.name, Layout);
-Vue.component(Layout.Header.name, Layout.Header);
-Vue.component(Layout.Footer.name, Layout.Footer);
-Vue.component(Layout.Sider.name, Layout.Sider);
-Vue.component(Layout.Content.name, Layout.Content);
-Vue.component(Menu.name, Menu);
-Vue.component(Menu.Item.name, Menu.Item);
-Vue.component(Menu.SubMenu.name, Menu.SubMenu);
-Vue.component(Icon.name, Icon);
-Vue.component(Breadcrumb.name, Breadcrumb);
-Vue.component(Breadcrumb.Item.name, Breadcrumb.Item);
+Vue.use(ConfigProvider);
+Vue.use(Button);
+Vue.use(Layout);
+Vue.use(Menu);
+Vue.use(Icon);
+Vue.use(Breadcrumb);
+Vue.use(Table);
+Vue.use(Pagination);
+Vue.use(Popconfirm);
+Vue.use(Modal);
+Vue.use(FormModel);
+Vue.use(Input);
+Vue.use(Radio);
+Vue.use(Switch);
+
+Vue.prototype.$notification = Notification;
+Vue.prototype.$message = Message;

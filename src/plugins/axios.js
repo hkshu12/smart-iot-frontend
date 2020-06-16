@@ -8,8 +8,8 @@ import axios from 'axios';
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 const config = {
-  // baseURL: process.env.baseURL || process.env.apiUrl || ""
-  // timeout: 60 * 1000, // Timeout
+  baseURL: 'http://101.37.80.37:8081',
+  timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
 };
 
@@ -19,20 +19,25 @@ _axios.interceptors.request.use(
   (config) =>
     // Do something before request is sent
     config,
-  (error) =>
+  (error) => {
     // Do something with request error
-    Promise.reject(error),
-
+    Vue.prototype.$message.error('响应出错', 3);
+    console.error(error);
+    return Promise.reject(error);
+  },
 );
 
 // Add a response interceptor
 _axios.interceptors.response.use(
   (response) =>
     // Do something with response data
-    response,
-  (error) =>
+    response.data,
+  (error) => {
     // Do something with response error
-    Promise.reject(error),
+    Vue.prototype.$message.error('请求出错', 3);
+    console.error(error);
+    return Promise.reject(error);
+  },
 
 );
 
