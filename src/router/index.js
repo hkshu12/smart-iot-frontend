@@ -52,9 +52,24 @@ const routes = [
     path: '/DataAnalytics',
     name: '数据分析',
     component: () => import(/* webpackChunkName: "data" */ '@/views/DataAnalytics/DataAnalytics.vue'),
-    meta: {
-      title: '数据分析',
-    },
+    children: [
+      {
+        path: 'DataPresentation',
+        name: '时序分析',
+        component: () => import(/* webpackChunkName: "data" */ '@/views/DataAnalytics/DataPresentation.vue'),
+        meta: {
+          title: '时序分析',
+        },
+      },
+      {
+        path: 'RealtimeAnalysis',
+        name: '实时分析',
+        component: () => import(/* webpackChunkName: "data" */ '@/views/DataAnalytics/RealtimeAnalysis.vue'),
+        meta: {
+          title: '实时分析',
+        },
+      },
+    ],
   },
   {
     path: '/About',
