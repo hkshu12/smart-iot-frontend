@@ -366,7 +366,7 @@ export default {
             const res = await this.$axios.post(url, this.modalForm);
             if (res.code === 1) {
               this.modalVisible = false;
-              this.modalForm = {};
+              this.$refs.ruleForm.resetFields();
               this.showChannelSetting = false;
               this.fetch();
             } else {
@@ -381,11 +381,11 @@ export default {
       });
     },
     handleModalReset() {
-      this.modalForm = {};
+      this.$refs.ruleForm.resetFields();
     },
     handleModalCancel() {
       this.modalVisible = false;
-      this.modalForm = {};
+      this.$refs.ruleForm.resetFields();
       this.isUpdate = false;
     },
   },

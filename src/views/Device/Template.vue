@@ -57,7 +57,7 @@
         </a-button>
       </template>
       <a-form-model
-        ref="ruleForm"
+        ref="templateForm"
         :model="modalForm"
         :rules="formRules"
         :label-col="{ span: 4 }"
@@ -297,7 +297,7 @@ export default {
       this.fetch(page - 1, pageSize);
     },
     showTemplateModal(content = {}) {
-      this.modalForm = content;
+      this.modalForm = { ...content };
       this.modalForm.channelDataString = JSON.stringify(this.modalForm.channelData);
       this.modalVisible = true;
     },
