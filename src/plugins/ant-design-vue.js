@@ -16,6 +16,8 @@ import {
   Input,
   Radio,
   Switch,
+  Select,
+  DatePicker,
 } from 'ant-design-vue';
 
 Vue.use(ConfigProvider);
@@ -32,6 +34,8 @@ Vue.use(FormModel);
 Vue.use(Input);
 Vue.use(Radio);
 Vue.use(Switch);
+Vue.use(Select);
+Vue.use(DatePicker);
 
 Vue.prototype.$notification = Notification;
 Vue.prototype.$message = Message;
