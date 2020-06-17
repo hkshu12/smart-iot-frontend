@@ -65,18 +65,35 @@ export default {
         },
         {
           key: '3',
+          title: '数据通道',
+          icon: 'funnel-plot',
+          children: [
+            {
+              key: '3.1',
+              title: '模板数据通道',
+              path: '/Channel/Template',
+            },
+            {
+              key: '3.2',
+              title: '设备数据通道',
+              path: '/Channel/Device',
+            },
+          ],
+        },
+        {
+          key: '4',
           title: '规则引擎',
           icon: 'cloud-upload',
           path: '/Rule/',
         },
         {
-          key: '4',
+          key: '5',
           title: '数据分析',
           icon: 'line-chart',
           path: '/DataAnalytics',
         },
         {
-          key: '5',
+          key: '6',
           title: '关于平台',
           icon: 'dash',
           path: '/About',

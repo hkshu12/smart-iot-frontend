@@ -1,6 +1,9 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Summary from '@/views/Summary.vue';
+import Channel from '../views/Channel/Channel.vue';
+import DeviceChannel from '../views/Channel/DeviceChannel.vue';
+import TemplateChannel from '../views/Channel/TemplateChannel.vue';
 
 Vue.use(VueRouter);
 
@@ -62,6 +65,32 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '@/views/About.vue'),
     meta: {
       title: '关于平台',
+    },
+  },
+  {
+    path: '/Channel',
+    name: '数据通道',
+    component: Channel,
+    children: [
+      {
+        path: 'Template',
+        name: '模板数据通道',
+        component: TemplateChannel,
+        meta: {
+          title: '模板数据通道',
+        },
+      },
+      {
+        path: 'Device',
+        name: '设备数据通道',
+        component: DeviceChannel,
+        meta: {
+          title: '设备数据通道',
+        },
+      },
+    ],
+    meta: {
+      title: '数据通道',
     },
   },
   {

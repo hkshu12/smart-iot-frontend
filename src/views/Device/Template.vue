@@ -153,7 +153,7 @@
           :auto-size="{minRows:5, maxRows:5}"
           placeholder='请按照{字段名:字段类型}形式输入数据字段，示例：
 {"height": 1, "message": 2}
-其中0表示布尔类型，1表示整型，2表示字符串。'
+其中0表示布尔类型，1表示浮点型，2表示字符串，3表示整型。'
           @blur="
             () => {
               $refs.channelDataString.onFieldBlur();
