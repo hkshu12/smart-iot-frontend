@@ -44,24 +44,9 @@ const routes = [
     path: '/Rule',
     name: '规则引擎',
     component: () => import(/* webpackChunkName: "rule" */ '@/views/Rule/Rule.vue'),
-    children: [
-      {
-        path: 'DeviceLinkage',
-        name: '设备联动',
-        component: () => import(/* webpackChunkName: "rule" */ '@/views/Rule/DeviceLinkage.vue'),
-        meta: {
-          title: '设备联动',
-        },
-      },
-      {
-        path: 'DataForwarding',
-        name: '数据转发',
-        component: () => import(/* webpackChunkName: "rule" */ '@/views/Rule/DataForwarding.vue'),
-        meta: {
-          title: '数据转发',
-        },
-      },
-    ],
+    meta: {
+      title: '规则引擎',
+    },
   },
   {
     path: '/DataAnalytics',

@@ -67,18 +67,7 @@ export default {
           key: '3',
           title: '规则引擎',
           icon: 'cloud-upload',
-          children: [
-            {
-              key: '3.1',
-              title: '设备联动',
-              path: '/Rule/DeviceLinkage',
-            },
-            {
-              key: '3.2',
-              title: '数据转发',
-              path: '/Rule/DataForwarding',
-            },
-          ],
+          path: '/Rule/',
         },
         {
           key: '4',
