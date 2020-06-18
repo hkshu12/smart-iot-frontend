@@ -246,7 +246,6 @@ export default {
             if (res.code === 1) {
               this.timePoints = res.data.timePoints;
               this.value = res.data.metrics[0].values;
-              console.log(this.value);
               this.initCharts();
             } else {
               this.$message.warning({ content: res.msg, key: 'warning', duration: 3 });
@@ -273,7 +272,6 @@ export default {
           /* eslint-disable guard-for-in */
           /* eslint-disable no-restricted-syntax */
           formatter(params) {
-            console.log(params);
             return `${that.$timeFormat(new Date(params[0].data[0]))}<br/>${params[0].data[1]}`;
           },
         },
