@@ -274,8 +274,7 @@ export default {
           /* eslint-disable no-restricted-syntax */
           formatter(params) {
             console.log(params);
-            return `${that.$timeFormat(new Date(params[0].data[0]))}
-${params[0].data[1]}`;
+            return `${that.$timeFormat(new Date(params[0].data[0]))}<br/>${params[0].data[1]}`;
           },
         },
         xAxis: {
