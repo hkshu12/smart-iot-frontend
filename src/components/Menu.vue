@@ -90,7 +90,18 @@ export default {
           key: '5',
           title: '数据分析',
           icon: 'line-chart',
-          path: '/DataAnalytics',
+          children: [
+            {
+              key: '4.1',
+              title: '时序分析',
+              path: '/DataAnalytics/DataPresentation',
+            },
+            {
+              key: '4.2',
+              title: '实时分析',
+              path: '/DataAnalytics/RealtimeAnalysis',
+            },
+          ],
         },
         {
           key: '6',

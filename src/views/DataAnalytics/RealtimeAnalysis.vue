@@ -1,9 +1,8 @@
 <template>
-  <router-view></router-view>
+  <div>abc</div>
 </template>
 
 <script>
 export default {
-
 };
 </script>
