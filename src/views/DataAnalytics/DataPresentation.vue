@@ -1,8 +1,5 @@
 <template>
   <a-layout-content>
-    <div>
-      <div id="lineChartContainer"></div>
-    </div>
     <div id="formContainer">
      <a-form-model
         ref="form"
@@ -141,6 +138,9 @@
         </a-form-model-item>
      </a-form-model>
     </div>
+    <div>
+      <div id="lineChartContainer"></div>
+    </div>
   </a-layout-content>
 </template>
 
@@ -229,6 +229,9 @@ export default {
           const payload = {};
           payload.startTime = this.form.dateRange[0].toDate();
           payload.endTime = this.form.dateRange[1].toDate();
+          if (payload.startTime > payload.endTime) {
+            [payload.startTime, payload.endTime] = [payload.endTime, payload.startTime];
+          }
           payload.intervalMinutes = parseInt(this.form.interval, 10);
           payload.measurePoints = [
             {
@@ -238,24 +241,45 @@ export default {
               fieldId: this.form.field,
             },
           ];
-          const res = await this.$axios.post('/analysis/timing/line-chart', payload);
-          this.timePoints = res.data.timePoints;
-          this.value = res.data.metrics[0].values;
-          console.log(this.value);
-          this.initCharts();
+          try {
+            const res = await this.$axios.post('/analysis/timing/line-chart', payload);
+            if (res.code === 1) {
+              this.timePoints = res.data.timePoints;
+              this.value = res.data.metrics[0].values;
+              console.log(this.value);
+              this.initCharts();
+            } else {
+              this.$message.warning({ content: res.msg, key: 'warning', duration: 3 });
+            }
+          } catch (err) {
+            this.$message.error(err, 3);
+            console.error(err);
+          }
         }
       });
     },
     initCharts() {
       const lineChartContainer = document.getElementById('lineChartContainer');
+      const zip = (...rows) => [...rows[0]].map((_, c) => rows.map((row) => row[c]));
+      const data = zip(this.timePoints, this.value);
+      const that = this;
       const options = {
         title: {
           text: '数据监控',
           left: 'center',
         },
+        tooltip: {
+          trigger: 'axis',
+          /* eslint-disable guard-for-in */
+          /* eslint-disable no-restricted-syntax */
+          formatter(params) {
+            console.log(params);
+            return `${that.$timeFormat(new Date(params[0].data[0]))}
+${params[0].data[1]}`;
+          },
+        },
         xAxis: {
-          type: 'category',
-          data: this.timePoints,
+          type: 'time',
         },
         yAxis: {
           type: 'value',
@@ -263,7 +287,7 @@ export default {
         },
         series: [
           {
-            data: this.value,
+            data,
             type: 'line',
           },
         ],
