@@ -18,6 +18,8 @@ import {
   Switch,
   Select,
   DatePicker,
+  Collapse,
+  Upload,
 } from 'ant-design-vue';
 
 Vue.use(ConfigProvider);
@@ -36,6 +38,8 @@ Vue.use(Radio);
 Vue.use(Switch);
 Vue.use(Select);
 Vue.use(DatePicker);
+Vue.use(Collapse);
+Vue.use(Upload);
 
 Vue.prototype.$notification = Notification;
 Vue.prototype.$message = Message;
