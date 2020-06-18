@@ -33,13 +33,14 @@
       </template>
     </a-table>
     <div class="table-footer">
-      <a-button class="back" @click="goBack()">
+      <a-button v-if="id != -1"
+                class="back" @click="goBack()">
         返回
       </a-button>
       <div class="add">
       <a-button v-if="canAdd" type="primary"
                 @click="modalType=2;showTemplateModal()">
-        添加模板
+        添加通道
       </a-button>
       </div>
     </div>
@@ -142,11 +143,11 @@ const columns = [
     scopedSlots: { customRender: 'field_operation' },
     align: 'center',
   },
-  {
-    title: '下发消息',
-    scopedSlots: { customRender: 'message_operation' },
-    align: 'center',
-  },
+  // {
+  //   title: '下发消息',
+  //   scopedSlots: { customRender: 'message_operation' },
+  //   align: 'center',
+  // },
 ];
 export default {
   name: 'TemplateChannel',
@@ -176,12 +177,6 @@ export default {
         templateId: [
           { required: true, message: '请输入设备id' },
         ],
-        // channelDataString: [
-        //   {
-        //     validator: dataFieldsValidator,
-        //     trigger: 'blur',
-        //   },
-        // ],
       },
     };
   },
@@ -280,6 +275,7 @@ export default {
       try {
         const res = await this.$axios.post(url, this.modalForm);
         if (res.code === 1) {
+          this.$message.success({ content: '更新成功', duration: 3 });
           this.modalVisible = false;
           this.modalForm = {};
           this.showChannelSetting = false;

@@ -28,20 +28,21 @@
         </a-popconfirm>
       </template>
       <template slot="field_operation" slot-scope="record">
-        <a-button @click="gotoDataField(record.id)">查看字段</a-button>
+        <a-button @click="gotoDataField(record.id,record.templateChannelId)">查看字段</a-button>
       </template>
       <template slot="message_operation" slot-scope="record">
         <a-button @click="sendMessage(record)" :disabled="record.channelType == 0">发送消息</a-button>
       </template>
     </a-table>
     <div class="table-footer">
-      <a-button class="back" @click="goBack()">
+      <a-button v-if="id!=-1"
+                class="back" @click="goBack()">
         返回
       </a-button>
       <div class="add">
       <a-button v-if="canAdd" type="primary"
                 @click="modalType=2;showTemplateModal()">
-        添加模板
+        添加通道
       </a-button>
       </div>
     </div>
@@ -94,15 +95,15 @@
           "/>
         </a-form-model-item>
         <a-form-model-item
-          ref="templateId"
-          label="模板id"
-          prop="templateId">
+          ref="deviceId"
+          label="设备id"
+          prop="deviceId">
           <a-input :disabled= "true"
-                   v-model="modalForm.templateId"
-                   placeholder="模板id"
+                   v-model="modalForm.deviceId"
+                   placeholder="设备id"
                    @blur="
             () => {
-              $refs.templateId.onFieldBlur();
+              $refs.deviceId.onFieldBlur();
             }
           "/>
         </a-form-model-item>
@@ -115,6 +116,7 @@
              @ok="handleMessageModalOk"
              @cancel="handleMessageModalCancel">
       <a-form-model
+        v-if="showMessageModal"
         :model="messageForm"
         :label-col="{ span: 4 }"
         :wrapper-col="{ span: 18 }">
@@ -122,7 +124,8 @@
         <a-form-model-item
           v-for="(item,index) in this.channelData" :key="index">
           <span slot="label">{{item.fieldName}}</span>
-<!--          <a-input v-model="form.name" />-->
+          <span><a-input v-model="dataForMessageForm[index].value"/>
+          </span>
         </a-form-model-item>
 
       </a-form-model>
@@ -200,15 +203,9 @@ export default {
         channelName: [
           { required: true, message: '请输入数据通道名称' },
         ],
-        templateId: [
+        deviceId: [
           { required: true, message: '请输入设备id' },
         ],
-        // channelDataString: [
-        //   {
-        //     validator: dataFieldsValidator,
-        //     trigger: 'blur',
-        //   },
-        // ],
       },
 
       channelData: [],
@@ -226,6 +223,8 @@ export default {
       showMessageModal: false,
       messageModalTitle: '数据下发',
       dataForMessageForm: [],
+      dataStr: '',
+      dataJson: {},
     };
   },
 
@@ -310,7 +309,7 @@ export default {
 
     showTemplateModal(content = {}) {
       this.modalForm = content;
-      this.modalForm.templateId = this.id;
+      this.modalForm.deviceId = this.id;
       this.modalForm.channelDataString = JSON.stringify(this.modalForm.channelData);
       this.modalVisible = true;
     },
@@ -330,6 +329,7 @@ export default {
       try {
         const res = await this.$axios.post(url, this.modalForm);
         if (res.code === 1) {
+          this.$message.success({ content: '更新成功', duration: 3 });
           this.modalVisible = false;
           this.modalForm = {};
           this.showChannelSetting = false;
@@ -352,35 +352,90 @@ export default {
       this.modalForm = {};
     },
 
-    async gotoDataField(channelId) {
-      this.$router.push(`/Channel/Data?channelId=${channelId}&channelType=1`);
+    async gotoDataField(channelId, templateChannelId) {
+      if (templateChannelId === -1) {
+        this.$router.push(`/Channel/Data?channelId=${channelId}&channelType=1`);
+      } else {
+        this.$router.push(`/Channel/Data?channelId=${templateChannelId}&channelType=0`);
+      }
     },
     async sendMessage(record) {
       this.messageForm.channelId = record.id;
       this.messageForm.topic = record.id.toString();
       this.messageForm.date = new Date();
       this.messageForm.deviceId = record.deviceId;
+      this.messageForm.direction = 1;
+      this.dataForMessageForm = [];
 
       try {
-        const res = await this.$axios(`/channel/get/data?channelType=${record.channelType}&channelId=${record.id}`);
-        this.channelData = res;
+        if (record.templateChannelId === -1) {
+          const res = await this.$axios(`/channel/get/data?channelType=1&channelId=${record.id}`);
+          this.channelData = res;
+        } else {
+          const res = await this.$axios(`/channel/get/data?channelType=0&channelId=${record.templateChannelId}`);
+          this.channelData = res;
+        }
+
         this.channelData.forEach((item) => {
-          this.dataForMessageForm.push({ name: item.fieldName });
+          if (item.fieldType === 0) {
+            // eslint-disable-next-line max-len
+            this.dataForMessageForm.push({ name: item.fieldName, type: item.fieldType, value: false });
+          }
+          if (item.fieldType === 1) {
+            // eslint-disable-next-line max-len
+            this.dataForMessageForm.push({ name: item.fieldName, type: item.fieldType, value: 0.1 });
+          }
+          if (item.fieldType === 2) {
+            this.dataForMessageForm.push({ name: item.fieldName, type: item.fieldType, value: 'string' });
+          }
+          if (item.fieldType === 3) {
+            this.dataForMessageForm.push({ name: item.fieldName, type: item.fieldType, value: 1 });
+          }
         });
-        console.log(this.channelData);
         this.showMessageModal = true;
       } catch (e) {
         // empty
       }
-      // console.log(this.messageForm);
-      // console.log(this.messageFormRules);
     },
     handleMessageModalCancel() {
       this.showMessageModal = false;
       this.messageForm = {};
     },
-    handleMessageModalOk() {
-      // TODO
+    async handleMessageModalOk() {
+      if (this.dataForMessageForm.length < 1) {
+        this.$message.error({ content: '没有内容可发送！', duration: 3 });
+        this.showMessageModal = false;
+        this.dataStr = '';
+        this.dataJson = {};
+      } else {
+        this.dataStr = '[';
+        this.dataForMessageForm.forEach((item) => {
+          if (item.type !== 2) {
+            this.dataStr += `{"${item.name}":${item.value}},`;
+          } else {
+            this.dataStr += `{"${item.name}":"${item.value}"},`;
+          }
+        });
+        this.dataStr = `${this.dataStr.substr(0, this.dataStr.length - 1)}]`;
+        this.dataJson = JSON.parse(this.dataStr);
+        this.messageForm.data = this.dataJson;
+        try {
+          const res = await this.$axios.post(`/message/send-to-device?deviceId=${this.messageForm.deviceId}`,
+            this.messageForm);
+          if (res.code === 1) {
+            this.showMessageModal = false;
+            this.messageForm = {};
+            this.$message.success({ content: '发送成功', duration: 3 });
+          } else {
+            this.$message.error({ content: res.msg, duration: 3 });
+          }
+        } catch (err) {
+          this.$message.error({ content: '更新失败', duration: 3 });
+        } finally {
+          this.dataStr = '';
+          this.dataJson = {};
+        }
+      }
     },
     goBack() {
       this.$router.back(-1);

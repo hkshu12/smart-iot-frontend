@@ -35,7 +35,7 @@
       <div class="add">
         <a-button v-if="canAdd" type="primary"
                   @click="modalType=2;showTemplateModal()">
-          添加模板
+          添加字段
         </a-button>
       </div>
     </div>
@@ -186,12 +186,6 @@ export default {
         channelType: [
           { required: true, message: '请输入通道类型' },
         ],
-        // channelDataString: [
-        //   {
-        //     validator: dataFieldsValidator,
-        //     trigger: 'blur',
-        //   },
-        // ],
       },
     };
   },
@@ -265,7 +259,6 @@ export default {
 
     async onClickDeleteButton(id) {
       this.$message.loading({ content: '删除中...', key: id });
-      console.log(id);
       try {
         const res = await this.$axios.post(`/channel/delete/data/${id}`);
         if (res.code === 1) {
@@ -302,6 +295,7 @@ export default {
       try {
         const res = await this.$axios.post(url, this.modalForm);
         if (res.code === 1) {
+          this.$message.success({ content: '更新成功', duration: 3 });
           this.modalVisible = false;
           this.modalForm = {};
           await this.getDataFields();

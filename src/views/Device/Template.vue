@@ -146,6 +146,22 @@
         </a-form-model-item>
         <a-form-model-item
           v-show="showChannelSetting"
+          ref="channelType"
+          label="通道类型"
+          prop="channelType"
+        >
+          <a-input
+            :disable="!modalType"
+            v-model="modalForm.channelType"
+            placeholder="0:至平台;1:至设备"
+            @blur="
+            () => {
+              $refs.channelType.onFieldBlur();
+            }
+          "/>
+        </a-form-model-item>
+        <a-form-model-item
+          v-show="showChannelSetting"
           ref="channelDataString"
           label="数据字段"
           prop="channelDataString"
@@ -251,6 +267,9 @@ export default {
         ],
         channelName: [
           { required: true, message: '请输入数据通道名称' },
+        ],
+        channelType: [
+          { required: true, message: '请输入数据通道类型' },
         ],
         channelDataString: [
           {
