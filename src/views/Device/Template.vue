@@ -24,6 +24,9 @@
           >删除</a-button>
         </a-popconfirm>
       </template>
+      <template slot="channel_operation" slot-scope="record">
+        <a-button @click="gotoTemplateChannel(record.id)">查看通道</a-button>
+      </template>
     </a-table>
     <div class="table-footer">
         <a-button @click="modalType=2;showTemplateModal()">添加模板</a-button>
@@ -354,6 +357,10 @@ export default {
       this.modalVisible = false;
       this.modalForm = {};
       this.showChannelSetting = false;
+    },
+    gotoTemplateChannel(templateId) {
+      this.$router.push(`/Channel/Template?id=${templateId}`);
+      // Change selected Menu?
     },
   },
 };

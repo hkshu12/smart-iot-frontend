@@ -2,11 +2,13 @@
   <div class="channel">
     <a-table
       :columns="columns"
-      :data-source="channelList"
+      :data-source="dataList"
       :loading="loading"
       :row-key="record => record.id"
       :pagination="false">
 
+      <template slot="fieldType" slot-scope="fieldTypeInt">
+        {{convertFieldType(fieldTypeInt)}}</template>
       <template slot="channelType" slot-scope="channelTypeInt">
         {{convertChannelType(channelTypeInt)}}</template>
       <template slot="channel_operation" slot-scope="record">
@@ -25,22 +27,16 @@
           >删除</a-button>
         </a-popconfirm>
       </template>
-      <template slot="field_operation" slot-scope="record">
-        <a-button @click="gotoDataField(record.id)">查看字段</a-button>
-      </template>
-      <template slot="message_operation" slot-scope="record">
-        <a-button @click="sendMessage(record)" :disabled="record.channelType == 0">发送消息</a-button>
-      </template>
     </a-table>
     <div class="table-footer">
       <a-button class="back" @click="goBack()">
         返回
       </a-button>
       <div class="add">
-      <a-button v-if="canAdd" type="primary"
-                @click="modalType=2;showTemplateModal()">
-        添加模板
-      </a-button>
+        <a-button v-if="canAdd" type="primary"
+                  @click="modalType=2;showTemplateModal()">
+          添加模板
+        </a-button>
       </div>
     </div>
     <a-modal
@@ -66,15 +62,41 @@
         :label-col="{ span: 4 }"
         :wrapper-col="{ span: 18 }">
         <a-form-model-item
-          ref="channelName"
-          label="通道名称"
-          prop="channelName">
+          ref="fieldName"
+          label="字段名称"
+          prop="fieldName">
           <a-input :disabled="modalType == 0"
-                   v-model="modalForm.channelName"
-                   placeholder="请输入通道名称"
+                   v-model="modalForm.fieldName"
+                   placeholder="请输入字段名称"
                    @blur="
             () => {
-              $refs.channelName.onFieldBlur();
+              $refs.fieldName.onFieldBlur();
+            }
+          "/>
+        </a-form-model-item>
+        <a-form-model-item
+          ref="fieldType"
+          label="字段类型"
+          prop="fieldType">
+          <a-input :disabled= "modalType != 2"
+                   v-model="modalForm.fieldType"
+                   placeholder="0:bool,1:double;2:str;3:int"
+                   @blur="
+            () => {
+              $refs.fieldType.onFieldBlur();
+            }
+          "/>
+        </a-form-model-item>
+        <a-form-model-item
+          ref="channelId"
+          label="通道id"
+          prop="channelId">
+          <a-input :disabled= "true"
+                   v-model="modalForm.channelId"
+                   placeholder="通道id"
+                   @blur="
+            () => {
+              $refs.channelId.onFieldBlur();
             }
           "/>
         </a-form-model-item>
@@ -82,25 +104,12 @@
           ref="channelType"
           label="通道类型"
           prop="channelType">
-          <a-input :disabled= "modalType != 2"
-                   v-model="modalForm.channelType"
-                   placeholder="0：向上通道，设备到平台，1：向下通道，平台到设备"
-                   @blur="
-            () => {
-              $refs.channelName.onFieldBlur();
-            }
-          "/>
-        </a-form-model-item>
-        <a-form-model-item
-          ref="templateId"
-          label="模板id"
-          prop="templateId">
           <a-input :disabled= "true"
-                   v-model="modalForm.templateId"
-                   placeholder="模板id"
+                   v-model="modalForm.channelType"
+                   placeholder="通道类型"
                    @blur="
             () => {
-              $refs.templateId.onFieldBlur();
+              $refs.channelType.onFieldBlur();
             }
           "/>
         </a-form-model-item>
@@ -115,21 +124,28 @@
 // eslint-disable-next-line no-unused-vars
 const columns = [
   {
-    title: '通道名称',
-    dataIndex: 'channelName',
-    key: 'channelName',
+    title: '字段名称',
+    dataIndex: 'fieldName',
+    key: 'fieldName',
   },
   {
-    title: '通道方向',
-    dataIndex: 'channelType',
-    key: 'channelType',
-    scopedSlots: { customRender: 'channelType' },
+    title: '字段类型',
+    dataIndex: 'fieldType',
+    key: 'fieldType',
+    scopedSlots: { customRender: 'fieldType' },
     align: 'center',
   },
   {
-    title: '模板Id',
-    dataIndex: 'templateId',
-    key: 'templateId',
+    title: '通道Id',
+    dataIndex: 'channelId',
+    key: 'channelId',
+    align: 'center',
+  },
+  {
+    title: '通道类型',
+    dataIndex: 'channelType',
+    key: 'channelType',
+    scopedSlots: { customRender: 'channelType' },
     align: 'center',
   },
   {
@@ -137,27 +153,18 @@ const columns = [
     scopedSlots: { customRender: 'channel_operation' },
     align: 'center',
   },
-  {
-    title: '查看通道内容',
-    scopedSlots: { customRender: 'field_operation' },
-    align: 'center',
-  },
-  {
-    title: '下发消息',
-    scopedSlots: { customRender: 'message_operation' },
-    align: 'center',
-  },
 ];
 export default {
-  name: 'TemplateChannel',
+  name: 'ChannelData',
 
   data() {
     return {
       loading: false,
-      channelList: [],
+      dataList: [],
       columns,
 
-      id: -1,
+      channelId: -1,
+      channelType: -1,
       canAdd: true,
 
       modalType: 0,
@@ -167,14 +174,17 @@ export default {
       showChannelSetting: false,
 
       formRules: {
+        fieldName: [
+          { required: true, message: '请输入字段名称' },
+        ],
+        fieldType: [
+          { required: true, message: '请输入字段类型' },
+        ],
+        channelId: [
+          { required: true, message: '请输入通道id' },
+        ],
         channelType: [
-          { required: true, message: '请选择通道类型' },
-        ],
-        channelName: [
-          { required: true, message: '请输入数据通道名称' },
-        ],
-        templateId: [
-          { required: true, message: '请输入设备id' },
+          { required: true, message: '请输入通道类型' },
         ],
         // channelDataString: [
         //   {
@@ -190,11 +200,11 @@ export default {
     modalTitle() {
       switch (this.modalType) {
         case 0:
-          return '查看通道';
+          return '查看字段';
         case 1:
-          return '编辑通道';
+          return '编辑字段';
         case 2:
-          return '新建通道';
+          return '新建字段';
         default:
           return undefined;
       }
@@ -202,25 +212,20 @@ export default {
   },
 
   mounted() {
-    this.id = this.$route.query.id;
-    if (this.id === undefined) {
-      this.id = -1;
-      this.canAdd = false;
+    this.channelId = this.$route.query.channelId;
+    this.channelType = this.$route.query.channelType;
+    if (this.channelId === undefined || this.channelType === undefined) {
+      this.$router.back(-1);
     }
-    this.getChannels();
+    this.getDataFields();
   },
 
   methods: {
-    async getChannels() {
+    async getDataFields() {
       this.loading = true;
       try {
-        if (this.id === -1) {
-          const res = await this.$axios('/channel/list/template-channel');
-          this.channelList = res;
-        } else {
-          const res = await this.$axios(`/channel/get/template-channel/${this.id}`);
-          this.channelList = res;
-        }
+        const res = await this.$axios(`/channel/get/data?channelType=${this.channelType}&channelId=${this.channelId}`);
+        this.dataList = res;
         this.loading = false;
       } catch (err) {
         // empty
@@ -230,11 +235,27 @@ export default {
     // eslint-disable-next-line consistent-return
     convertChannelType(channelTypeInt) {
       if (channelTypeInt === 0) {
-        return '向上通道';
+        return '隶属于模板通道';
       }
       if (channelTypeInt === 1) {
-        return '向下通道';
+        return '隶属于设备通道';
       }
+    },
+
+    convertFieldType(fieldTypeInt) {
+      if (fieldTypeInt === 0) {
+        return 'boolean';
+      }
+      if (fieldTypeInt === 1) {
+        return 'double';
+      }
+      if (fieldTypeInt === 2) {
+        return 'string';
+      }
+      if (fieldTypeInt === 3) {
+        return 'int';
+      }
+      return '未知';
     },
 
     onClickUpdateButton(record) {
@@ -244,13 +265,14 @@ export default {
 
     async onClickDeleteButton(id) {
       this.$message.loading({ content: '删除中...', key: id });
+      console.log(id);
       try {
-        const res = await this.$axios.post(`/channel/delete/template-channel/${id}`);
+        const res = await this.$axios.post(`/channel/delete/data/${id}`);
         if (res.code === 1) {
           this.$message.success({ content: '删除成功', key: id, duration: 3 });
-          this.getChannels();
+          this.getDataFields();
         } else {
-          this.$message.error({ content: '删除失败', key: id, duration: 3 });
+          this.$message.error({ content: '删除失败,请检查约束！', key: id, duration: 3 });
         }
       } catch (e) {
         console.log(e);
@@ -260,17 +282,17 @@ export default {
 
     showTemplateModal(content = {}) {
       this.modalForm = content;
-      this.modalForm.templateId = this.id;
-      this.modalForm.channelDataString = JSON.stringify(this.modalForm.channelData);
+      this.modalForm.channelId = this.channelId;
+      this.modalForm.channelType = this.channelType;
       this.modalVisible = true;
     },
 
     async handleModalOk() {
       let url;
       if (this.modalType === 2) {
-        url = '/channel/add/template-channel';
+        url = '/channel/add/field';
       } else if (this.modalType === 1) {
-        url = `/channel/modify/template-chanel/${this.modalForm.id}`;
+        url = `/channel/modify/data/${this.modalForm.id}`;
       } else {
         console.err('未知的模态框类型！');
         this.$message.error('未知的模态框类型！', 3);
@@ -282,8 +304,7 @@ export default {
         if (res.code === 1) {
           this.modalVisible = false;
           this.modalForm = {};
-          this.showChannelSetting = false;
-          await this.getChannels();
+          await this.getDataFields();
         } else {
           this.$message.error({ content: '更新失败', duration: 3 });
         }
@@ -301,13 +322,6 @@ export default {
     handleModalReset() {
       this.modalForm = {};
     },
-
-    gotoDataField(channelId) {
-      this.$router.push(`/Channel/Data?channelId=${channelId}&channelType=0`);
-    },
-    sendMessage(record) {
-      console.log(record);
-    },
     goBack() {
       this.$router.back(-1);
     },
@@ -323,4 +337,5 @@ export default {
     margin 0 20px
     .add
       float right
+
 </style>
