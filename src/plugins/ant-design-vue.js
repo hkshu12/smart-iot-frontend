@@ -20,6 +20,7 @@ import {
   DatePicker,
   Collapse,
   Upload,
+  Empty,
 } from 'ant-design-vue';
 
 Vue.use(ConfigProvider);
@@ -40,6 +41,7 @@ Vue.use(Select);
 Vue.use(DatePicker);
 Vue.use(Collapse);
 Vue.use(Upload);
+Vue.use(Empty);
 
 Vue.prototype.$notification = Notification;
 Vue.prototype.$message = Message;

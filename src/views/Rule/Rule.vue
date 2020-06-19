@@ -15,7 +15,11 @@
         {{record.fieldName + ruleType[record.ruleType] + record.thresholdVal}}
       </template>
       <template slot="rule_operation" slot-scope="record">
-        <a-button @click="onClickUpdateButton(record)">编辑</a-button>
+        <a-button @click="onClickShowLogButton(record.id)">日志记录</a-button>
+        <a-button
+          @click="onClickUpdateButton(record)"
+          style="margin-left:14px;"
+        >编辑</a-button>
         <a-popconfirm
           placement="topLeft"
           ok-text="确认"
@@ -190,6 +194,35 @@
         </a-form-model-item>
       </a-form-model>
     </a-modal>
+    <a-modal
+      :title="logModalTitle"
+      :visible="logModalVisible"
+      @cancel="()=>logModalVisible=false"
+      :footer="null"
+    >
+      <a-collapse
+        accordion
+        v-if="ruleLog.length > 0"
+      >
+        <a-collapse-panel
+          :showArrow="false"
+          v-for="log in ruleLog"
+          :key="log.id"
+          :header="`ID:${log.id}${$timeFormat(log.createTime)}`"
+          :style="logPanelStyle(log.success)"
+        >
+        <pre>{{JSON.parse(log.data)}}</pre>
+        <a-icon
+          slot="extra"
+          :type="log.success? 'check-circle':'close-circle'"
+          theme="twoTone"
+          :two-tone-color="log.success? '#67C23A':'#F56C6C'"
+          />
+
+        </a-collapse-panel>
+      </a-collapse>
+      <a-empty v-else />
+    </a-modal>
   </div>
 </template>
 
@@ -268,7 +301,7 @@ let ruleActionType;
 }(ruleActionType || (ruleActionType = {})));
 
 export default {
-  name: 'templateManagement',
+  name: 'Rule',
   data() {
     return {
       ruleList: [],
@@ -303,6 +336,9 @@ export default {
           { required: true, message: '请输入目标' },
         ],
       },
+      ruleLog: [],
+      logModalVisible: false,
+      logModalTitle: '',
     };
   },
   computed: {
@@ -311,6 +347,11 @@ export default {
         return '编辑规则';
       }
       return '新建规则';
+    },
+    // eslint-disable-next-line no-unused-vars
+    logPanelStyle() {
+      return (success) => (success ? 'background: #F0F9EB;border-radius: 4px;'
+        : 'background: #FEF0F0;border-radius: 4px;');
     },
   },
   mounted() {
@@ -387,6 +428,12 @@ export default {
       this.modalVisible = false;
       this.$refs.ruleForm.resetFields();
       this.isUpdate = false;
+    },
+    async onClickShowLogButton(id) {
+      const res = await this.$axios(`/rule/log/${id}`);
+      this.ruleLog = res.data;
+      this.logModalTitle = `规则${id}日志记录`;
+      this.logModalVisible = true;
     },
   },
 };
