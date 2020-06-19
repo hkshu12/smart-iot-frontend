@@ -50,18 +50,7 @@ export default {
           key: '2',
           title: '设备',
           icon: 'sliders',
-          children: [
-            {
-              key: '2.1',
-              title: '设备模板',
-              path: '/Device/Template',
-            },
-            {
-              key: '2.2',
-              title: '设备管理',
-              path: '/Device/Management',
-            },
-          ],
+          path: '/Device',
         },
         {
           key: '3',

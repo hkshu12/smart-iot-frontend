@@ -195,7 +195,7 @@
       </a-form-model>
     </a-modal>
     <a-modal
-      :title="logModalTitle"
+      :title="logModalTitle + '（显示最近20条记录）'"
       :visible="logModalVisible"
       @cancel="()=>logModalVisible=false"
       :footer="null"

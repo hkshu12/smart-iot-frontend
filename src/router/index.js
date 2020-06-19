@@ -21,24 +21,9 @@ const routes = [
     path: '/Device',
     name: '设备',
     component: () => import(/* webpackChunkName: "device" */ '@/views/Device/Device.vue'),
-    children: [
-      {
-        path: 'Template',
-        name: '设备模板',
-        component: () => import(/* webpackChunkName: "device" */ '@/views/Device/Template.vue'),
-        meta: {
-          title: '设备模板',
-        },
-      },
-      {
-        path: 'Management',
-        name: '设备管理',
-        component: () => import(/* webpackChunkName: "device" */ '@/views/Device/Manage.vue'),
-        meta: {
-          title: '设备管理',
-        },
-      },
-    ],
+    meta: {
+      title: '设备',
+    },
   },
   {
     path: '/Rule',
