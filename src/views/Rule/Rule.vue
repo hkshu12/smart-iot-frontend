@@ -208,17 +208,18 @@
           :showArrow="false"
           v-for="log in ruleLog"
           :key="log.id"
-          :header="`ID:${log.id}${$timeFormat(log.createTime)}`"
+          :header="`ID:${log.id}`"
           :style="logPanelStyle(log.success)"
         >
         <pre>{{JSON.parse(log.data)}}</pre>
-        <a-icon
-          slot="extra"
-          :type="log.success? 'check-circle':'close-circle'"
-          theme="twoTone"
-          :two-tone-color="log.success? '#67C23A':'#F56C6C'"
+        <template slot="extra">
+          <span style="margin:0 5px;color:gray;">{{$timeFormat(log.createTime)}}</span>
+          <a-icon
+            :type="log.success?   'check-circle':'close-circle'"
+            theme="twoTone"
+            :two-tone-color="log.success?   '#67C23A':'#F56C6C'"
           />
-
+        </template>
         </a-collapse-panel>
       </a-collapse>
       <a-empty v-else />
@@ -432,7 +433,7 @@ export default {
     async onClickShowLogButton(id) {
       const res = await this.$axios(`/rule/log/${id}`);
       this.ruleLog = res.data;
-      this.logModalTitle = `规则${id}日志记录`;
+      this.logModalTitle = `规则 ${id} 日志记录`;
       this.logModalVisible = true;
     },
   },
