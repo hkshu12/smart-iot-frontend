@@ -41,7 +41,7 @@
             <a-button @click="onClickAddOperator">添加算子</a-button>
           </template>
           <template slot="operation" slot-scope="record">
-            <a-button @click="onClickOperatorDetail(record)">详情</a-button>
+            <a-button @click="onClickUpdateOperator(record)">编辑</a-button>
             <a-popconfirm
               placement="topLeft"
               ok-text="确认"
