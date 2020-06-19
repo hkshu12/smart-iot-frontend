@@ -11,7 +11,7 @@
       >
       <a-form-model-item
           ref="device"
-          label="规则名称"
+          label="设备名称"
           prop="device"
         >
           <a-select
@@ -227,11 +227,13 @@ export default {
           this.$message.warning('请检查表单！', 3);
         } else {
           const payload = {};
-          payload.startTime = this.form.dateRange[0].toDate();
-          payload.endTime = this.form.dateRange[1].toDate();
+          [payload.startTime, payload.endTime] = this.form.dateRange;
           if (payload.startTime > payload.endTime) {
             [payload.startTime, payload.endTime] = [payload.endTime, payload.startTime];
           }
+          payload.startTime = payload.startTime.startOf('day').toDate();
+          const current = new Date();
+          payload.endTime = payload.endTime.endOf('day').toDate() > current ? current : payload.endTime.endOf('day').toDate();
           payload.intervalMinutes = parseInt(this.form.interval, 10);
           payload.measurePoints = [
             {

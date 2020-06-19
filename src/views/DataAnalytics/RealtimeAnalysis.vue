@@ -41,7 +41,7 @@
             <a-button @click="onClickAddOperator">添加算子</a-button>
           </template>
           <template slot="operation" slot-scope="record">
-            <a-button @click="onClickUpdateOperator(record)">编辑</a-button>
+            <a-button @click="onClickOperatorDetail(record)">详情</a-button>
             <a-popconfirm
               placement="topLeft"
               ok-text="确认"
@@ -70,6 +70,7 @@
             <a-button @click="onClickAddTask">添加任务</a-button>
           </template>
           <template slot="operation" slot-scope="record">
+            <a-button @click="onClickTaskDetail(record.taskId)">详情</a-button>
             <a-popconfirm
               placement="topLeft"
               ok-text="确认"
@@ -308,6 +309,40 @@
         </a-form-model-item>
       </a-form-model>
     </a-modal>
+    <a-modal
+      v-if="taskDetailModalVisible"
+      :visible="taskDetailModalVisible"
+      @cancel="taskDetailModalVisible = false"
+      :footer="null"
+    >
+      <div>任务名: {{taskDetail.name}}</div>
+      <div>任务描述: {{taskDetail.description}}</div>
+      <div>模型名: {{taskDetail.model.name}}</div>
+      <div>模型描述: {{taskDetail.model.description}}</div>
+      <div>数据通道:
+        <ul>
+        <li
+          v-for="channel in taskDetail.channels"
+          :key="channel.channelId"
+        >{{channel.channelName}}</li>
+        </ul>
+      </div>
+      <a-collapse>
+      <a-collapse-panel
+        v-for="field in taskDetail.inputFields"
+        :key="field.inputFieldId"
+        :header="field.inputFieldName"
+      >
+        <div>算子：{{field.operator.name}}</div>
+        <div>字段：
+          <span
+            v-for="channelField in field.channelFields"
+            :key="channelField.fieldId"
+          >{{channelField.fieldName}}</span>
+        </div>
+      </a-collapse-panel>
+      </a-collapse>
+    </a-modal>
   </a-layout-content>
 </template>
 
@@ -411,6 +446,10 @@ export default {
       fieldList: [],
       inputForm: {},
       uploading: false,
+      taskDetail: {
+        name: '',
+      },
+      taskDetailModalVisible: false,
     };
   },
   mounted() {
@@ -458,11 +497,6 @@ export default {
       this.taskModalVisible = true;
       this.taskModalType = 0;
     },
-    // onClickUpdateTask(record) {
-    //   this.operatorModalVisible = true;
-    //   this.operatorModalType = 1;
-    //   this.operatorForm = { ...record };
-    // },
     async onClickDeleteModel(id) {
       this.$message.loading({ content: '删除中...', key: id });
       try {
@@ -618,6 +652,15 @@ export default {
         this.taskModalVisible = false;
         this.taskForm = {};
         this.inputForm = {};
+      } else {
+        this.$message.warning(res.msg, 3);
+      }
+    },
+    async onClickTaskDetail(taskId) {
+      const res = await this.$axios(`/analysis/online/task/detail?taskId=${taskId}`);
+      if (res.code === 1) {
+        this.taskDetail = res.data;
+        this.taskDetailModalVisible = true;
       } else {
         this.$message.warning(res.msg, 3);
       }
