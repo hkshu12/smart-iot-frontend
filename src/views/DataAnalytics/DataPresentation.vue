@@ -231,9 +231,10 @@ export default {
           if (payload.startTime > payload.endTime) {
             [payload.startTime, payload.endTime] = [payload.endTime, payload.startTime];
           }
-          payload.startTime = payload.startTime.startOf('day').toDate();
+          payload.startTime = payload.startTime.startOf('day').add(8, 'h');
+          payload.startTime = payload.startTime.toDate();
           const current = new Date();
-          payload.endTime = payload.endTime.endOf('day').toDate() > current ? current : payload.endTime.endOf('day').toDate();
+          payload.endTime = payload.endTime.endOf('day').toDate() > current ? new Date(current.setHours(current.getHours() + 8)) : payload.endTime.endOf('day').add(8, 'h').toDate();
           payload.intervalMinutes = parseInt(this.form.interval, 10);
           payload.measurePoints = [
             {

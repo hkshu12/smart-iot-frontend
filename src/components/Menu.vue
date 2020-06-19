@@ -42,9 +42,9 @@ export default {
       list: [
         {
           key: '1',
-          title: '概览',
+          title: '关于',
           icon: 'appstore',
-          path: '/Summary',
+          path: '/About',
         },
         {
           key: '2',
@@ -91,12 +91,6 @@ export default {
               path: '/DataAnalytics/RealtimeAnalysis',
             },
           ],
-        },
-        {
-          key: '6',
-          title: '关于平台',
-          icon: 'dash',
-          path: '/About',
         },
       ],
     };

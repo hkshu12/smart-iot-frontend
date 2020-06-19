@@ -1,21 +1,12 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Summary from '@/views/Summary.vue';
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: '/',
-    redirect: '/Summary',
-  },
-  {
-    path: '/Summary',
-    name: '数据概览',
-    component: Summary,
-    meta: {
-      title: '数据概览',
-    },
+    redirect: '/About',
   },
   {
     path: '/Device',
@@ -58,10 +49,10 @@ const routes = [
   },
   {
     path: '/About',
-    name: '关于平台',
+    name: '关于',
     component: () => import(/* webpackChunkName: "about" */ '@/views/About.vue'),
     meta: {
-      title: '关于平台',
+      title: '关于',
     },
   },
   {
