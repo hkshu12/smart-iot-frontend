@@ -175,7 +175,7 @@
       </a-form-model-item>
       <a-form-model-item
         ref="description"
-        label="模型描述"
+        label="算子描述"
         prop="description"
       >
         <a-textarea
@@ -640,12 +640,13 @@ export default {
     async submitTask() {
       const functions = Object.entries(this.inputForm).map(([inputFieldId, val]) => ({
         channelFieldIds: val.channelFieldIds,
-        inputFieldId,
+        inputFieldId: parseInt(inputFieldId, 10),
         operatorId: val.operatorId,
       }));
+      const payload = { ...this.taskForm, functions };
       const res = await this.$axios.post(
         '/analysis/online/task/create',
-        { ...this.taskForm, functions },
+        payload,
       );
       if (res.code === 1) {
         this.fetchTask();
