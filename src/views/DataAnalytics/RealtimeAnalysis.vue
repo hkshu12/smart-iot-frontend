@@ -545,6 +545,7 @@ export default {
         this.$notification.success({
           message: '执行成功',
           description: `${JSON.stringify(res.data.result, null, 2)}`,
+          duration: 0,
         });
       } else {
         this.$notification.error({
